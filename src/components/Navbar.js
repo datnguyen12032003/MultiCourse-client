@@ -31,19 +31,46 @@ const Navbar = () => {
   const [walletData, setWalletData] = useState(null);
 
   useEffect(() => {
+    let token = localStorage.getItem("authToken");
+    if (!token) {
+      token = Cookies.get("Token");
+      if (token) {
+        localStorage.setItem("authToken", token);
+        setIsLoggedIn(true);
+        fetchUserProfile();
+        fetchBalance();
+      } else {
+        setIsLoggedIn(false);
+      }
+    } else {
+      setIsLoggedIn(true);
+      fetchUserProfile();
+      fetchBalance();
+    }
+
+    const protectedRoutes = ["/userprofile", "/cart"];
+    if (protectedRoutes.includes(location.pathname) && !token) {
+      debouncedNavigate("/login");
+    }
+  }, [debouncedNavigate, location.pathname]);
+
+  useEffect(() => {
     const fetchWalletData = async () => {
       const token = localStorage.getItem("authToken");
+      const role = localStorage.getItem("role");
       try {
-        const response = await axios.get(
-          "https://multicourse.onrender.com/api/wallet/show-wallet-admin",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            withCredentials: true,
-          }
-        );
-        setWalletData(response.data);
+        if (role === "Admin") {
+          const response = await axios.get(
+            "https://multicourse.onrender.com/api/wallet/show-wallet-admin",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              withCredentials: true,
+            }
+          );
+          setWalletData(response.data);
+        }
       } catch (err) {
         setErrorWallet("Có lỗi xảy ra khi tải thông tin ví");
       } finally {
@@ -78,6 +105,9 @@ const Navbar = () => {
 
   const fetchUserProfile = async () => {
     const token = localStorage.getItem("authToken");
+    if (!token) {
+      token = Cookies.get("Token");
+    }
 
     if (!token) {
       setError("You are not logged in. Please log in again.");
@@ -157,30 +187,6 @@ const Navbar = () => {
       console.error("Lỗi khi lấy balance:", error);
     }
   };
-
-  useEffect(() => {
-    let token = localStorage.getItem("authToken");
-    if (!token) {
-      token = Cookies.get("Token");
-      if (token) {
-        localStorage.setItem("authToken", token);
-        setIsLoggedIn(true);
-        fetchUserProfile();
-        fetchBalance();
-      } else {
-        setIsLoggedIn(false);
-      }
-    } else {
-      setIsLoggedIn(true);
-      fetchUserProfile();
-      fetchBalance();
-    }
-
-    const protectedRoutes = ["/userprofile", "/cart"];
-    if (protectedRoutes.includes(location.pathname) && !token) {
-      debouncedNavigate("/login");
-    }
-  }, [debouncedNavigate, location.pathname]);
 
   const deleteCookie = (name) => {
     document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=localhost; secure; SameSite=None;`;
