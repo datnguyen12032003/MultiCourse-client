@@ -221,6 +221,7 @@ const Login = () => {
         })
           .then((res) => res.json())
           .then((data) => {
+            console.log("Role:", data.role);
             localStorage.setItem("role", data.role);
             // Tạo một event để thông báo role đã thay đổi
             window.dispatchEvent(new Event("roleChanged"));
