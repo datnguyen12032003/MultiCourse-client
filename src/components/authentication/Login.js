@@ -227,6 +227,8 @@ const Login = () => {
             window.dispatchEvent(new Event("roleChanged"));
             window.location.href = "/course-list";
           });
+      } else {
+        console.log("Token not found in cookies.");
       }
     }, 500);
   };
