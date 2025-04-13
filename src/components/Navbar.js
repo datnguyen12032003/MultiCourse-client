@@ -156,9 +156,12 @@ const Navbar = () => {
       console.error("Lỗi khi lấy balance:", error);
     }
   };
-
   useEffect(() => {
+    const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
     const initializeNavbar = async () => {
+      await delay(2000); // Đợi 2 giây trước khi thực hiện các hành động tiếp theo
+
       let token = localStorage.getItem("authToken");
 
       // Kiểm tra token trong cookie nếu không có trong localStorage
