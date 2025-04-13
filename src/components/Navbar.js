@@ -29,21 +29,7 @@ const Navbar = () => {
   const [loadingWallet, setLoadingWallet] = useState(true);
   const [errorWallet, setErrorWallet] = useState(null);
   const [walletData, setWalletData] = useState(null);
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const tokenFromURL = urlParams.get("token");
 
-    if (tokenFromURL) {
-      localStorage.setItem("authToken", tokenFromURL);
-      // Xoá token khỏi URL sau khi đã lưu
-      window.history.replaceState({}, document.title, "/course-list");
-
-      // Gọi lại fetchUserProfile và fetchBalance nếu muốn cập nhật giao diện ngay
-      fetchUserProfile();
-      fetchBalance();
-      setIsLoggedIn(true);
-    }
-  }, []);
   useEffect(() => {
     const fetchWalletData = async () => {
       const token = localStorage.getItem("authToken");
@@ -94,8 +80,12 @@ const Navbar = () => {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
-      setError("You are not logged in. Please log in again.");
-      return;
+      const cookieToken = Cookies.get("Token");
+      if (cookieToken) {
+        localStorage.setItem("authToken", cookieToken);
+      } else {
+        return;
+      }
     }
 
     try {
@@ -151,7 +141,12 @@ const Navbar = () => {
     try {
       const token = localStorage.getItem("authToken");
       if (!token) {
-        return;
+        const cookieToken = Cookies.get("Token");
+        if (cookieToken) {
+          localStorage.setItem("authToken", cookieToken);
+        } else {
+          return;
+        }
       }
       const role = localStorage.getItem("role");
       if (role === "Admin") {
@@ -175,9 +170,10 @@ const Navbar = () => {
   useEffect(() => {
     let token = localStorage.getItem("authToken");
     if (!token) {
-      token = Cookies.get("Token");
-      if (token) {
-        localStorage.setItem("authToken", token);
+      const cookieToken = Cookies.get("Token");
+      if (cookieToken) {
+        localStorage.setItem("authToken", cookieToken);
+        token = cookieToken;
       }
     }
 
