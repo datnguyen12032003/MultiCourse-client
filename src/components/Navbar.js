@@ -163,15 +163,16 @@ const Navbar = () => {
       token = Cookies.get("Token");
       if (token) {
         localStorage.setItem("authToken", token);
+        setIsLoggedIn(true);
+        fetchUserProfile();
+        fetchBalance();
+      } else {
+        setIsLoggedIn(false);
       }
-    }
-
-    if (token) {
+    } else {
       setIsLoggedIn(true);
       fetchUserProfile();
       fetchBalance();
-    } else {
-      setIsLoggedIn(false);
     }
 
     const protectedRoutes = ["/userprofile", "/cart"];

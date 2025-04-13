@@ -212,8 +212,8 @@ const Login = () => {
 
         // Thêm đoạn code lấy role từ API
         fetch("https://multicourse.onrender.com/api/users/profile", {
-           method: "GET",
-        credentials: "include",
+          method: "GET",
+          credentials: "include",
           headers: {
             Authorization: `Bearer ${token}`,
           },
