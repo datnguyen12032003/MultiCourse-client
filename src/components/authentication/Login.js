@@ -205,13 +205,15 @@ const Login = () => {
     );
 
     const checkToken = setInterval(() => {
-      const token = getCookie("token");
+      const token = getCookie("Token");
       if (token) {
         clearInterval(checkToken);
         localStorage.setItem("authToken", token);
 
         // Thêm đoạn code lấy role từ API
         fetch("https://multicourse.onrender.com/api/users/profile", {
+           method: "GET",
+        credentials: "include",
           headers: {
             Authorization: `Bearer ${token}`,
           },
