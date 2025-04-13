@@ -58,6 +58,8 @@ import ViewCertificate from "./components/tutors/ViewCertificate";
 import UpdateCourseModal from "./components/tutors/UpdateCourseModal";
 import TutorRequests from "./components/tutors/TutorRequests";
 import PurchasedCourseDetail from "./components/students/PurchasedCourseDetail";
+import { get } from "js-cookie";
+import { Cookie } from "lucide-react";
 // import RequestDetail from "./components/tutors/RequestDetail";
 
 function Layout() {
@@ -65,6 +67,13 @@ function Layout() {
   const [navbarKey, setNavbarKey] = useState(0);
 
   //kt tken
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    token = Cookie.get("Token");
+    if (token) {
+      localStorage.setItem("authToken", token);
+    }
+  }
   const isAuthenticated = localStorage.getItem("authToken") !== null;
   console.log("authenticate:", isAuthenticated);
 

@@ -34,15 +34,17 @@ const Navbar = () => {
     const fetchWalletData = async () => {
       const token = localStorage.getItem("authToken");
       try {
-        const response = await axios.get(
-          "https://multicourse.onrender.com/api/wallet/show-wallet-admin",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setWalletData(response.data);
+        if (role && role === "Admin") {
+          const response = await axios.get(
+            "https://multicourse.onrender.com/api/wallet/show-wallet-admin",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setWalletData(response.data);
+        }
       } catch (err) {
         setErrorWallet("Có lỗi xảy ra khi tải thông tin ví");
       } finally {
