@@ -40,6 +40,7 @@ const Navbar = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
+            withCredentials: true,
           }
         );
         setWalletData(response.data);
