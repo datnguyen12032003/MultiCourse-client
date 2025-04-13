@@ -217,18 +217,14 @@ const Login = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          withCredentials: true,
         })
           .then((res) => res.json())
           .then((data) => {
-            console.log("Role:", data.role);
             localStorage.setItem("role", data.role);
             // Tạo một event để thông báo role đã thay đổi
             window.dispatchEvent(new Event("roleChanged"));
             window.location.href = "/course-list";
           });
-      } else {
-        console.log("Token not found in cookies.");
       }
     }, 500);
   };

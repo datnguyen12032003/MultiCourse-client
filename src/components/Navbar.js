@@ -156,49 +156,29 @@ const Navbar = () => {
       console.error("Lỗi khi lấy balance:", error);
     }
   };
+
   useEffect(() => {
-    const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-    const initializeNavbar = async () => {
-      await delay(2000); // Đợi 2 giây trước khi thực hiện các hành động tiếp theo
-
-      let token = localStorage.getItem("authToken");
-
-      // Kiểm tra token trong cookie nếu không có trong localStorage
-      if (!token) {
-        token = Cookies.get("Token");
-        if (token) {
-          localStorage.setItem("authToken", token);
-        }
+    let token = localStorage.getItem("authToken");
+    if (!token) {
+      token = Cookies.get("Token");
+      if (token) {
+        localStorage.setItem("authToken", token);
       }
+    }
 
-      // Nếu không có token, chuyển hướng đến trang đăng nhập
-      if (!token) {
-        setIsLoggedIn(false);
-        debouncedNavigate("/login");
-        return;
-      }
-
-      // Nếu có token, thực hiện các API call
+    if (token) {
       setIsLoggedIn(true);
+      fetchUserProfile();
+      fetchBalance();
+    } else {
+      setIsLoggedIn(false);
+    }
 
-      try {
-        // Gọi API lấy thông tin người dùng
-        await fetchUserProfile();
-
-        // Gọi API lấy số dư
-        await fetchBalance();
-      } catch (error) {
-        console.error("Error during initialization:", error);
-        setIsLoggedIn(false);
-        localStorage.removeItem("authToken");
-        Cookies.remove("Token");
-        debouncedNavigate("/login");
-      }
-    };
-
-    initializeNavbar();
-  }, [debouncedNavigate]);
+    const protectedRoutes = ["/userprofile", "/cart"];
+    if (protectedRoutes.includes(location.pathname) && !token) {
+      debouncedNavigate("/login");
+    }
+  }, [debouncedNavigate, location.pathname]);
 
   const deleteCookie = (name) => {
     document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=localhost; secure; SameSite=None;`;
