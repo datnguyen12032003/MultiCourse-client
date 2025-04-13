@@ -217,6 +217,7 @@ const Login = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
+          withCredentials: true,
         })
           .then((res) => res.json())
           .then((data) => {
